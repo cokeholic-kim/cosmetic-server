@@ -1,28 +1,47 @@
-//node는 common JS를 사용함
-//불러올때 require를 사용
-const http = require('http');
-//본인 컴퓨터 주소를 의미함!!
-const hostname = "127.0.0.1";
+//express 서버 만들기
+const express = require("express");//import express
+const cors = require("cors");
+
+//mysql부르기
+const mysql = require("mysql");
+
+//서버 생성 --> express( )호출
+const app = express();
+//프로세서의 주소 포트번호 지정
 const port = 8080;
-//createServer()--> 서버생성
-//요청정보 req, 응답정보 res
-const server = http.createServer(function(req,res){
-    const path = req.url;
-    const method = req.method;
-    if(path==="/products"){
-        //응답을 보낼때 json 객체를 보낼거임
-        res.writeHead(200,{'Content-type':'application/json'})
-        //객체를 json파일 로 변환 JSON.stringify(obj)
-        const product = JSON.stringify({
-            name:"기초화장품",
-            price:50000
-        })
-        res.end(product);
-    }else{
-        res.end('hahahahahahahahah');
-    }
+// JSON형식의 데이터를 처리할수 있도록 설정
+app.use(express.json());
+// 브라우저의 CORS 이슈를 막기 위해 사용하는 코드
+app.use(cors());
+
+//sql 연결선 만들기
+const conn = mysql.createConnection({
+    host:"localhost",
+    port:'3306',
+    user:"root",
+    password:"1234",
+    database:"shopping"
+})
+//sql 연결하기 
+conn.connect();
+
+
+
+// get요청시 응답 app.get(경로,콜백함수)
+app.get('/products',(req,res)=>{
+    conn.query('select * from products',function(error,result,fields){
+        res.send(result);
+        console.log(result);
+    });
 })
 
-//listen은 대기 호스트네임과 포트 번호 요청을 기다림
-server.listen(port,hostname); //서버를 응답할수잇도록 대기상태로 만듬.
-console.log("화장품 서버가 동작 중입니다.")
+app.get("/products/:id",(req,res)=>{
+    const params = req.params;
+    const {id} = params;
+    res.send(`id는${id}이다`)
+})
+
+//서버구동
+app.listen(port,()=>{
+    console.log("서버가 돌아가고있습니다.")
+})
