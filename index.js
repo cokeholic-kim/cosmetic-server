@@ -41,7 +41,6 @@ const storage = multer.diskStorage({
         const newFilename = file.originalname;
         cb(null,newFilename);
     }
-
 })
 const upload = multer({ storage : storage }); // {dest:storage} => {storage:storage}
 app.post('/upload',upload.single('file'),async (req,res)=>{
@@ -73,6 +72,14 @@ const conn = mysql.createConnection({
 })
 //sql 연결하기 
 conn.connect();
+
+//삭제요청시 처리하기
+app.delete('/delProduct/:id',async (req,res)=>{
+    const {id} = req.params;
+    conn.query(`delete from products where p_id = ${id}`,(err,result,feild)=>{
+        res.send("ok");
+    })
+})
 
 
 
