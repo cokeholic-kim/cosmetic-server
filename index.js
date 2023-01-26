@@ -64,10 +64,10 @@ app.post('/upload',upload.single('file'),async (req,res)=>{
 
 //sql 연결선 만들기
 const conn = mysql.createConnection({
-    host:"localhost",
+    host:"customer-tutorial.cuukeoat8h7o.ap-northeast-1.rds.amazonaws.com",
     port:'3306',
-    user:"root",
-    password:"1234",
+    user:"admin",
+    password:"",
     database:"shopping"
 })
 //sql 연결하기 
